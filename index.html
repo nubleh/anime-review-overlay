@@ -1,0 +1,151 @@
+<style>
+  body {
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    font-family: Corbel, sans-serif;
+  }
+
+  #anime {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 33vh;
+    user-select: none;
+    transition: opacity 0.2s;
+
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .anime-pic {
+    height: 31vh;
+    width: 31vh;
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    flex: 0 0 31vh;
+    margin: 1vh;
+  }
+
+  .anime-info {
+    flex: 1 1 auto;
+    padding: 2vh;
+  }
+  .anime-title {
+    font-size: 7vh;
+    color: #fff;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5),
+      1px 1px 0 rgba(0, 0, 0, 0.5),
+      1px 0 0 rgba(0, 0, 0, 0.5);
+  }
+
+  .anime-count > div {
+    margin: 1vh 0;
+    font-size: 4vh;
+    background: rgba(255, 255, 255, 0.5);
+    color: #000;
+    display: inline-block;
+    padding: 0.3vh 4vh;
+    border-radius: 999px;
+  }
+
+  #dummy {
+    position: fixed;
+    right: 100vw;
+    bottom: 100vh;
+  }
+</style>
+
+<body>
+  <div id="anime">
+  </div>
+
+  <script>
+    const animeEl = document.getElementById('anime');
+    let items = [];
+    let i = 0;
+    const iLocalStorageKey = 'overlay-anime-index';
+    let picIndex = 0;
+    function readData(data) {
+      items = data.items;
+      i = (function(){
+        let cached = parseInt(localStorage.getItem(iLocalStorageKey));
+        if (cached >= items.length || typeof cached !== 'number' || isNaN(cached)) {
+          cached = 0;
+        }
+        return cached;
+      })();
+      animeEl.style.opacity = '0.5';
+      showAnime();
+    }
+
+    animeEl.onclick = function() {
+      i++;
+      if (i >= items.length) {
+        i = 0;
+      }
+      localStorage.setItem(iLocalStorageKey, i);
+      picIndex = 0;
+      animeEl.style.opacity = '0.5';
+      showAnime();
+    };
+
+    animeEl.oncontextmenu = function() {
+      i--;
+      if (i < 0) {
+        i = items.length - 1;
+      }
+      localStorage.setItem(iLocalStorageKey, i);
+      picIndex = 0;
+      showAnime();
+
+      return false;
+    };
+
+    animeEl.onmousewheel = function() {
+      const animeData = items[i];
+      if (!animeData) {
+        return;
+      }
+      picIndex++;
+      if (picIndex >= animeData.pics.length) {
+        picIndex = 0;
+      }
+      showAnime();
+    }
+
+    function showAnime() {
+      const animeData = items[i];
+      if (!animeData) {
+        return;
+      }
+      const pic = animeData.pics[picIndex];
+
+      const dummy = document.getElementById('dummy') || document.createElement('img');
+      dummy.id = 'dummy';
+      dummy.onload = function(){
+        animeEl.style.opacity = '';
+        animeEl.innerHTML = `
+        <div class="anime-info">
+          <div class="anime-count">
+            <div>
+              ${i + 1} / ${items.length}
+            </div>
+          </div>
+          <div class="anime-title">
+            ${animeData.title}
+          </div>
+        </div>
+        <div class="anime-pic" style="background-image: url('${pic}');">
+        </div>
+      `;
+      };
+      document.body.appendChild(dummy);
+      dummy.src = pic;
+
+    }
+  </script>
+  <script src="animelist.jsonp"></script>
+</body>
