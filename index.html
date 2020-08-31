@@ -1,9 +1,11 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quicksand">
 <style>
   body {
     padding: 0;
     margin: 0;
     color: #fff;
-    font-family: Corbel, sans-serif;
+    font-family: 'Quicksand', Corbel, sans-serif;
+    background-size: cover;
   }
 
   #anime {
@@ -41,7 +43,7 @@
       1px 0 0 rgba(0, 0, 0, 0.5);
   }
 
-  .anime-count > div {
+  .anime-score > div {
     margin: 1vh 0;
     font-size: 4vh;
     background: rgba(255, 255, 255, 0.5);
@@ -63,6 +65,9 @@
   </div>
 
   <script>
+    if (location.hash === '#test') {
+      document.body.style.backgroundImage = `url('https://cdn1.epicgames.com/ue/product/Screenshot/1-1920x1080-4f7bf484dcbe3ddb99f434cad5de1ed3.jpg?resize=1&w=1600')`;
+    }
     const animeEl = document.getElementById('anime');
     let items = [];
     let i = 0;
@@ -129,11 +134,18 @@
         animeEl.style.opacity = '';
         animeEl.innerHTML = `
         <div class="anime-info">
-          <div class="anime-count">
+          <div class="anime-score">
             <div>
-              ${i + 1} / ${items.length}
+              ${animeData.score} / 10
             </div>
           </div>
+          ${/*
+            <div class="anime-count">
+              <div>
+                ${i + 1} / ${items.length}
+              </div>
+            </div>
+          */''}
           <div class="anime-title">
             ${animeData.title}
           </div>
