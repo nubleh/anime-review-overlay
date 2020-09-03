@@ -28,7 +28,13 @@
     background-position: right bottom;
     background-repeat: no-repeat;
     flex: 0 0 31vh;
-    margin: 1vh;
+    margin: 3vh 6vh;
+  }
+
+  .text {
+    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5),
+      2px 2px 0 rgba(0, 0, 0, 0.5),
+      2px 0 0 rgba(0, 0, 0, 0.5);
   }
 
   .anime-info {
@@ -36,22 +42,58 @@
     padding: 2vh;
   }
   .anime-title {
-    font-size: 7vh;
+    font-size: 6vh;
+    font-weight: bold;
     color: #fff;
-    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5),
-      1px 1px 0 rgba(0, 0, 0, 0.5),
-      1px 0 0 rgba(0, 0, 0, 0.5);
+  }
+  .anime-eng-title {
+    font-size: 2.5vh;
+    margin-bottom: 1vh;
+  }
+
+  .anime-synopsis {
+    font-size: 2vh;
   }
 
   .anime-score > div {
     margin: 1vh 0;
-    font-size: 4vh;
-    background: rgba(255, 255, 255, 0.5);
-    color: #000;
+    font-size: 2.5vh;
+    font-weight: bold;
+    background: #333;
+    color: #fff;
     display: inline-block;
-    padding: 0.3vh 4vh;
+    padding: 0.5vh 4vh;
     border-radius: 999px;
+    position: relative;
   }
+  
+  .anime-score > div::before,
+  .anime-score > div::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 1.3vh;
+    height: 1.3vh;
+    border-radius: 1.3vh;
+    transform: translateY(-50%);
+  }
+  .anime-score > div::before {
+    left: 1.3vh;
+  }
+  .anime-score > div::after {
+    right: 1.3vh;
+  }
+  .score-0::before, .score-0::after { background: #ff00bf; }
+  .score-1::before, .score-1::after { background: #ff0085; }
+  .score-2::before, .score-2::after { background: #ff0048; }
+  .score-3::before, .score-3::after { background: #ff000c; }
+  .score-4::before, .score-4::after { background: #fd3c00; }
+  .score-5::before, .score-5::after { background: #fc8500; }
+  .score-6::before, .score-6::after { background: #fad400; }
+  .score-7::before, .score-7::after { background: #e1ff05; }
+  .score-8::before, .score-8::after { background: #9eff14; }
+  .score-9::before, .score-9::after { background: #5cff23; }
+  .score-10::before, .score-10::after { background: #06ff36; }
 
   #dummy {
     position: fixed;
@@ -135,8 +177,8 @@
         animeEl.innerHTML = `
         <div class="anime-info">
           <div class="anime-score">
-            <div>
-              ${animeData.score} / 10
+            <div class="score-${animeData.score}">
+              ${animeData.score}/10
             </div>
           </div>
           ${/*
@@ -146,8 +188,23 @@
               </div>
             </div>
           */''}
-          <div class="anime-title">
+          <div class="anime-title text">
             ${animeData.title}
+          </div>
+          ${animeData?.altNames?.['English:'] ? `<div class="anime-eng-title text">
+            ${animeData?.altNames?.['English:']}
+          </div>` : ''}
+          <div class="anime-synopsis text">
+            ${animeData.synopsis.replace(
+              /\[Written by .*\]/,
+              ''
+            ).replace(
+              /\n/g,
+              '<br>'
+            ).replace(
+              /\(Source:.*\)/,
+              ''
+            )}
           </div>
         </div>
         <div class="anime-pic" style="background-image: url('${pic}');">
