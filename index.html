@@ -67,6 +67,9 @@
         transform: translateY(100%);
         opacity: 0;
       }
+      .anime-top-info {
+        transition: transform 0.4s;
+      }
     
       .anime-score > div {
         margin: 1vh 0;
@@ -151,6 +154,7 @@
       const iLocalStorageKey = 'overlay-anime-index';
       const sLocalStorageKey = 'overlay-anime-show-synopsis';
       let picIndex = 0;
+      let titleWithoutSynopsisRect = undefined;
 
       function setShowSynopsis(mode, override) {
         if (busy) {
@@ -285,8 +289,11 @@
 
           if (prevI !== i) {
             existingEl.style.transition = 'none';
-            existingEl.style.transform = i > prevI ? 'translateX(100%)' : 'translateX(-100%)';
+            existingEl.style.transform = i > prevI
+              ? `translateX(100%)`
+              : `translateX(-100%)`;
             existingEl.style.opacity = '0';
+            titleWithoutSynopsisRect = undefined;
           }
           const pic = animeData.pics[picIndex];
           const year = animeData.info['Aired:'].match(/\d\d\d\d/)[0];
@@ -296,22 +303,24 @@
           const epWord = parseInt(episodes) > 1 ? 'Episodes' : 'Episode';
           existingEl.innerHTML = `
             <div class="anime-info">
-              <div class="anime-score">
-                <div class="score-${animeData.score}">
-                  ${animeData.score}/10
+              <div class="anime-top-info">
+                <div class="anime-score">
+                  <div class="score-${animeData.score}">
+                    ${animeData.score}/10
+                  </div>
                 </div>
-              </div>
-              <div class="anime-title text">
-                ${animeData.title}
-              </div>
-              ${animeData.altNames['English:'] ? `<div class="anime-eng-title text">
-                ${animeData.altNames['English:']}
-              </div>` : ''}
-              <div class="anime-tags tag-${type.toLowerCase()}">
-                ${type ? `<div>${type}</div>` : ''}
-                ${year ? `<div>${year}</div>` : ''}
-                ${studios ? `<div>${studios}</div>` : ''}
-                ${episodes ? `<div>${episodes} ${epWord}</div>` : ''}
+                <div class="anime-title text">
+                  ${animeData.title}
+                </div>
+                ${animeData.altNames['English:'] ? `<div class="anime-eng-title text">
+                  ${animeData.altNames['English:']}
+                </div>` : ''}
+                <div class="anime-tags tag-${type.toLowerCase()}">
+                  ${type ? `<div>${type}</div>` : ''}
+                  ${year ? `<div>${year}</div>` : ''}
+                  ${studios ? `<div>${studios}</div>` : ''}
+                  ${episodes ? `<div>${episodes} ${epWord}</div>` : ''}
+                </div>
               </div>
               ${showSynopsis ? `<div class="anime-synopsis text">
                 ${animeData.synopsis.replace(
@@ -330,6 +339,18 @@
             </div>
           `;
           
+          const titleNow = existingEl.querySelector('.anime-top-info');
+          const rectNow = titleNow.getClientRects()[0];
+          if (titleWithoutSynopsisRect) {
+            titleNow.style.transition = 'none';
+            titleNow.style.transform = `translateY(${titleWithoutSynopsisRect.y - rectNow.y}px)`;
+            setTimeout(function(){
+              titleNow.style.transition = '';
+              titleNow.style.transform = '';
+            }, 20);
+          }
+          titleWithoutSynopsisRect = rectNow;
+
           const synopsisBox = existingEl.querySelector('.anime-synopsis');
           setTimeout(function(){
             if (synopsisBox){
