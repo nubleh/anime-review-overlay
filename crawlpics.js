@@ -91,6 +91,9 @@ items.forEach((i, index) => {
 
     });
 
+    const synopsisEl = dummy.querySelector('[itemprop=description]');
+    i.synopsis = synopsisEl.innerText;
+
     console.log(`${index + 1}/${items.length} info done`);
   });
 });
