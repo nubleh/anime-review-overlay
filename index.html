@@ -221,7 +221,7 @@
         return;
       }
       const pic = animeData.pics[picIndex];
-      const year = animeData.info['Aired:']?.match(/\d\d\d\d/)[0];
+      const year = animeData.info['Aired:'].match(/\d\d\d\d/)[0];
       const studios = animeData.info['Studios:'];
       const type = animeData.info['Type:'];
       const episodes = animeData.info['Episodes:'];
@@ -238,20 +238,13 @@
               ${animeData.score}/10
             </div>
           </div>
-          ${/*
-            <div class="anime-count">
-              <div>
-                ${i + 1} / ${items.length}
-              </div>
-            </div>
-          */''}
           <div class="anime-title text">
             ${animeData.title}
           </div>
-          ${animeData?.altNames?.['English:'] ? `<div class="anime-eng-title text">
-            ${animeData?.altNames?.['English:']}
+          ${animeData.altNames['English:'] ? `<div class="anime-eng-title text">
+            ${animeData.altNames['English:']}
           </div>` : ''}
-          <div class="anime-tags tag-${type?.toLowerCase()}">
+          <div class="anime-tags tag-${type.toLowerCase()}">
             ${type ? `<div>${type}</div>` : ''}
             ${year ? `<div>${year}</div>` : ''}
             ${studios ? `<div>${studios}</div>` : ''}
