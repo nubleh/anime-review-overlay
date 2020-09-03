@@ -189,6 +189,7 @@
         if (e.which === 40) {
           // key down
           showSynopsis = !showSynopsis;
+          localStorage.setItem(sLocalStorageKey, showSynopsis);
           showAnime();
         }
         if (e.which === 37) {
