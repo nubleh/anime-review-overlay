@@ -61,11 +61,19 @@
         margin-bottom: 1vh;
       }
     
+      @keyframes slide-up {
+        0% {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        100% {
+          transform: none;
+          opacity: 1;
+        }
+      }
       .anime-synopsis {
         font-size: 2vh;
-        transition: transform 0.5s, opacity 0.5s;
-        transform: translateY(100%);
-        opacity: 0;
+        animation: slide-up 0.6s 1;
       }
       .anime-top-info {
         transition: transform 0.4s;
@@ -225,10 +233,10 @@
           }
           return cached;
         })();
-        showSynopsis = (function(){
-          let cached = localStorage.getItem(sLocalStorageKey) === 'true';
-          return cached;
-        })();
+        // showSynopsis = (function(){
+        //   let cached = localStorage.getItem(sLocalStorageKey) === 'true';
+        //   return cached;
+        // })();
         mainContainer.style.opacity = '0.5';
         showAnime();
       }
@@ -281,10 +289,13 @@
         dummy.id = 'dummy';
         dummy.onload = function(){
           busy = false;
+          const alreadyExisted = !!document.querySelector(`.anime-${i}`);
           const existingEl = document.querySelector(`.anime-${i}`) || document.createElement('div');
           existingEl.className = `anime-box anime-${i}`;
           existingEl.setAttribute('data-i', i);
-          mainContainer.appendChild(existingEl);
+          if (!alreadyExisted) {
+            mainContainer.appendChild(existingEl);
+          }
           mainContainer.style.opacity = '';
 
           if (prevI !== i) {
@@ -301,44 +312,54 @@
           const type = animeData.info['Type:'];
           const episodes = animeData.info['Episodes:'];
           const epWord = parseInt(episodes) > 1 ? 'Episodes' : 'Episode';
-          existingEl.innerHTML = `
-            <div class="anime-info">
-              <div class="anime-top-info">
-                <div class="anime-score">
-                  <div class="score-${animeData.score}">
-                    ${animeData.score}/10
+          if (existingEl.innerHTML === '') {
+            existingEl.innerHTML = `
+              <div class="anime-info">
+                <div class="anime-top-info">
+                  <div class="anime-score">
+                    <div class="score-${animeData.score}">
+                      ${animeData.score}/10
+                    </div>
+                  </div>
+                  <div class="anime-title text">
+                    ${animeData.title}
+                  </div>
+                  ${animeData.altNames['English:'] ? `<div class="anime-eng-title text">
+                    ${animeData.altNames['English:']}
+                  </div>` : ''}
+                  <div class="anime-tags tag-${type.toLowerCase()}">
+                    ${type ? `<div>${type}</div>` : ''}
+                    ${year ? `<div>${year}</div>` : ''}
+                    ${studios ? `<div>${studios}</div>` : ''}
+                    ${episodes ? `<div>${episodes} ${epWord}</div>` : ''}
                   </div>
                 </div>
-                <div class="anime-title text">
-                  ${animeData.title}
-                </div>
-                ${animeData.altNames['English:'] ? `<div class="anime-eng-title text">
-                  ${animeData.altNames['English:']}
-                </div>` : ''}
-                <div class="anime-tags tag-${type.toLowerCase()}">
-                  ${type ? `<div>${type}</div>` : ''}
-                  ${year ? `<div>${year}</div>` : ''}
-                  ${studios ? `<div>${studios}</div>` : ''}
-                  ${episodes ? `<div>${episodes} ${epWord}</div>` : ''}
+                <div class="anime-synopsis text">
+                  ${animeData.synopsis.replace(
+                    /\[Written by .*\]/,
+                    ''
+                  ).replace(
+                    /\n/g,
+                    '<br>'
+                  ).replace(
+                    /\(Source:.*\)/,
+                    ''
+                  )}
                 </div>
               </div>
-              ${showSynopsis ? `<div class="anime-synopsis text">
-                ${animeData.synopsis.replace(
-                  /\[Written by .*\]/,
-                  ''
-                ).replace(
-                  /\n/g,
-                  '<br>'
-                ).replace(
-                  /\(Source:.*\)/,
-                  ''
-                )}
-              </div>` : ''}
-            </div>
-            <div class="anime-pic" style="background-image: url('${pic}');">
-            </div>
-          `;
+              <div class="anime-pic" style="background-image: url('${pic}');">
+              </div>
+            `;
+          } else {
+            existingEl.querySelector('.anime-pic').style.backgroundImage = `url('${pic}')`;
+          }
           
+          const synopsisBox = existingEl.querySelector('.anime-synopsis');
+          if (showSynopsis) {
+            synopsisBox.style.display = '';
+          } else {
+            synopsisBox.style.display = 'none';
+          }
           const titleNow = existingEl.querySelector('.anime-top-info');
           const rectNow = titleNow.getClientRects()[0];
           if (titleWithoutSynopsisRect) {
@@ -351,12 +372,7 @@
           }
           titleWithoutSynopsisRect = rectNow;
 
-          const synopsisBox = existingEl.querySelector('.anime-synopsis');
           setTimeout(function(){
-            if (synopsisBox){
-              synopsisBox.style.transform = 'none';
-              synopsisBox.style.opacity = '1';
-            }
             Array.from(document.querySelectorAll('.anime-box')).forEach(function(el){
               const thisI = el.getAttribute('data-i');
               if (el.classList.contains(`anime-${i}`)) {
