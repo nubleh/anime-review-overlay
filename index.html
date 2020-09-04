@@ -26,6 +26,7 @@
         align-items: flex-end;
         letter-spacing: 0.05em;
         transition: transform 0.5s, opacity 0.5s;
+        transition-timing-function: cubic-bezier(0,.7,.3,1);
       }
 
       #anime {
@@ -74,9 +75,11 @@
       .anime-synopsis {
         font-size: 2vh;
         animation: slide-up 0.6s 1;
+        animation-timing-function: cubic-bezier(0,.7,.3,1);
       }
       .anime-top-info {
         transition: transform 0.4s;
+        transition-timing-function: cubic-bezier(0,.7,.3,1);
       }
     
       .anime-score > div {
