@@ -25,7 +25,7 @@
         display: flex;
         align-items: flex-end;
         letter-spacing: 0.05em;
-        transition: transform 0.5s, opacity 0.5s;
+        transition: transform 2s, opacity 2s;
         transition-timing-function: cubic-bezier(0,.7,.3,1);
       }
 
@@ -74,11 +74,11 @@
       }
       .anime-synopsis {
         font-size: 2vh;
-        animation: slide-up 0.6s 1;
+        animation: slide-up 2s 1;
         animation-timing-function: cubic-bezier(0,.7,.3,1);
       }
       .anime-top-info {
-        transition: transform 0.4s;
+        transition: transform 2s;
         transition-timing-function: cubic-bezier(0,.7,.3,1);
       }
     
@@ -391,7 +391,7 @@
                 if (i + '' !== thisI + '') {
                   el.remove();
                 }
-              }, 500);
+              }, 2000);
             });
 
             if (prevI !== i) {
